@@ -11,6 +11,15 @@ from sample_data import create_sample_users, create_sample_events, create_sample
 
 BASE_URL = "http://localhost:8000"
 
+def serialize_for_json(model):
+    """Convert Pydantic model to JSON-serializable dict with datetime handling"""
+    data = model.model_dump()
+    # Convert any datetime objects to ISO format strings
+    for key, value in data.items():
+        if isinstance(value, datetime):
+            data[key] = value.isoformat()
+    return data
+
 async def test_api():
     """Test the recommendation API with sample data"""
     
@@ -40,7 +49,7 @@ async def test_api():
     for user in users:
         response = requests.post(
             f"{BASE_URL}/users/",
-            json=user.model_dump()
+            json=serialize_for_json(user)
         )
         if response.status_code == 200:
             print(f"  ✅ Created user: {user.name}")
@@ -50,13 +59,9 @@ async def test_api():
     # Create events
     print("\n🎉 Creating events...")
     for event in events:
-        # Convert datetime to string for JSON serialization
-        event_data = event.model_dump()
-        event_data['date'] = event.date.isoformat()
-        
         response = requests.post(
             f"{BASE_URL}/events/",
-            json=event_data
+            json=serialize_for_json(event)
         )
         if response.status_code == 200:
             print(f"  ✅ Created event: {event.title}")
@@ -68,7 +73,7 @@ async def test_api():
     for pref in preferences:
         response = requests.post(
             f"{BASE_URL}/users/{pref.user_id}/preferences/",
-            json=pref.model_dump()
+            json=serialize_for_json(pref)
         )
         if response.status_code == 200:
             print(f"  ✅ Set preferences for user: {pref.user_id}")
