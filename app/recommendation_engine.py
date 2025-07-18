@@ -1,5 +1,5 @@
 from typing import List
-from models import Event, UserPreferences, RecommendationResponse
+from .models import Event, UserPreferences, RecommendationResponse
 
 class ContentBasedRecommendationEngine:
     """

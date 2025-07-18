@@ -1,0 +1,4 @@
+user_id,name,email,age,location,created_at,categories
+user_1,Alice Johnson,alice@example.com,28,"New York",2025-01-17T10:00:00,"Technology;Business"
+user_2,Bob Smith,bob@example.com,35,"San Francisco",2025-01-17T10:30:00,"Music;Art"
+user_3,Carol Davis,carol@example.com,42,"Los Angeles",2025-01-17T11:00:00,"Food;Art;Business" 

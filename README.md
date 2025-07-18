@@ -1,26 +1,57 @@
 # Vaimo Event Recommendation System
 
-A content-based recommendation system built with FastAPI for matching users with relevant events based on their preferences and interests.
+A content-based recommendation system built with FastAPI for matching users with relevant events based on their preferences and interests. The system loads data from CSV files to simulate reading from a remote database.
 
 ## Features
 
 - **Content-Based Filtering**: Recommends events based on simple category matching between user preferences and events
 - **Simple Scoring**: Events matching user's preferred categories get a score of 1.0, others get 0.0
-- **RESTful API**: Clean FastAPI endpoints for user management, event creation, and getting recommendations
+- **CSV Data Loading**: Loads events and users from CSV files on startup to simulate remote database access
+- **RESTful API**: Clean FastAPI endpoints for retrieving events and getting recommendations
 - **Explainable Recommendations**: Each recommendation comes with a human-readable explanation
 
 ## Architecture
 
 ```
 vaimo_recom_sys/
-├── main.py                    # FastAPI application and API endpoints
-├── models.py                  # Pydantic data models
-├── recommendation_engine.py   # Content-based recommendation logic
-├── sample_data.py            # Sample data for testing
-├── test_recommendations.py   # Test script with examples
+├── app/                       # Main application package
+│   ├── __init__.py           # Package init file
+│   ├── main.py               # FastAPI application and API endpoints
+│   ├── models.py             # Pydantic data models
+│   ├── recommendation_engine.py # Content-based recommendation logic
+│   └── config.py             # Configuration settings
+├── data/                      # Data files
+│   ├── events.csv            # Sample events data (simulates remote DB)
+│   └── users.csv             # Sample users and preferences data
+├── tests/                     # Test files
+│   ├── __init__.py           # Test package init
+│   └── test_recommendations.py # Test script with examples
+├── docs/                      # Documentation (future use)
+├── run.py                     # Application startup script
 ├── requirements.txt          # Python dependencies
+├── .gitignore                # Git ignore rules
 └── README.md                 # This file
 ```
+
+## Project Structure
+
+### `/app/` - Main Application Package
+- **`main.py`** - FastAPI application with API endpoints
+- **`models.py`** - Pydantic data models for validation
+- **`recommendation_engine.py`** - Content-based recommendation logic
+- **`config.py`** - Centralized configuration settings
+- **`__init__.py`** - Package initialization
+
+### `/data/` - Data Files
+- **`events.csv`** - Sample events data with columns: event_id, title, description, category, tags (semicolon-separated), location, date, price, organizer, capacity, rating
+- **`users.csv`** - Sample users and preferences with columns: user_id, name, email, age, location, created_at, categories (semicolon-separated preferences)
+
+### `/tests/` - Test Suite
+- **`test_recommendations.py`** - API and functionality tests
+- **`__init__.py`** - Test package initialization
+
+### `/docs/` - Documentation
+- Future documentation files
 
 ## Models
 
@@ -63,10 +94,15 @@ The content-based recommendation engine uses simple category matching:
 ### Starting the API Server
 
 ```bash
-python main.py
+python run.py
 ```
 
-The server will start on `http://localhost:8000`
+Or run directly with uvicorn:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+The server will start on `http://localhost:8000` and automatically load data from CSV files on each request.
 
 ### API Documentation
 
@@ -74,9 +110,6 @@ Visit `http://localhost:8000/docs` for interactive API documentation (Swagger UI
 
 ### API Endpoints
 
-- **POST** `/users/` - Create a new user
-- **POST** `/users/{user_id}/preferences/` - Set user preferences
-- **POST** `/events/` - Create a new event
 - **GET** `/events/` - Get all events
 - **GET** `/users/{user_id}/recommendations/` - Get personalized recommendations
 
@@ -85,51 +118,43 @@ Visit `http://localhost:8000/docs` for interactive API documentation (Swagger UI
 Run the test script to see the system in action:
 
 ```bash
-python test_recommendations.py
+python tests/test_recommendations.py
+```
+
+Or from the project root:
+```bash
+python -m pytest tests/
 ```
 
 This will:
-1. Load sample users, events, and preferences
-2. Test the API endpoints
-3. Generate recommendations for each user
+1. Test the API endpoints
+2. Retrieve all events
+3. Generate recommendations for each user based on their CSV-defined preferences
 4. Display results with explanations
 
 ## Example Usage
 
-### 1. Create a User
+### 1. Get All Events
 
 ```python
 import requests
 
-user_data = {
-    "user_id": "alice123",
-    "name": "Alice Johnson",
-    "email": "alice@example.com",
-    "age": 28,
-    "location": "San Francisco"
-}
+response = requests.get("http://localhost:8000/events/")
+events = response.json()
 
-response = requests.post("http://localhost:8000/users/", json=user_data)
+for event in events:
+    print(f"Event: {event['title']}")
+    print(f"Category: {event['category']}")
+    print(f"Location: {event['location']}")
+    print(f"Price: ${event['price']}")
+    print("---")
 ```
 
-### 2. Set User Preferences
-
-```python
-preferences = {
-    "categories": ["Technology", "Business"]
-}
-
-response = requests.post(
-    "http://localhost:8000/users/alice123/preferences/", 
-    json=preferences
-)
-```
-
-### 3. Get Recommendations
+### 2. Get Recommendations for a User
 
 ```python
 response = requests.get(
-    "http://localhost:8000/users/alice123/recommendations/?limit=5"
+    "http://localhost:8000/users/user_1/recommendations/?limit=5"
 )
 recommendations = response.json()
 
@@ -143,11 +168,20 @@ for rec in recommendations:
 ## Sample Data
 
 The system includes sample data with:
-- 3 sample users with different category preferences
-- 8 diverse events across categories (Technology, Music, Art, Business, Food)
-- Simple user preferences focused on categories
+- **3 sample users** with different category preferences:
+  - Alice (user_1): Technology, Business
+  - Bob (user_2): Music, Art  
+  - Carol (user_3): Food, Art, Business
+- **8 diverse events** across categories (Technology, Music, Art, Business, Food)
+- Events located in New York, San Francisco, and Los Angeles
 
 ## Extending the System
+
+### Adding New Data
+
+1. **Add Events**: Edit `data/events.csv` to include new events
+2. **Add Users**: Edit `data/users.csv` to include new users and their preferences
+3. **No Restart Needed**: Data is loaded on-demand with each request
 
 ### Adding New Recommendation Factors
 
@@ -165,16 +199,29 @@ The current system uses only content-based filtering. You can extend it by:
 
 ### Database Integration
 
-Replace the in-memory storage with a proper database:
+Replace the CSV loading with a proper database:
 1. Add SQLAlchemy models
 2. Set up database connections
 3. Implement proper CRUD operations
+4. Replace CSV loading functions with database queries
 
 ## Technology Stack
 
 - **FastAPI**: Modern, fast web framework for building APIs
 - **Pydantic**: Data validation and serialization
 - **Uvicorn**: ASGI server for FastAPI
+- **CSV**: Simple data storage format for demo purposes
+
+## Configuration
+
+The system uses a centralized configuration file (`app/config.py`) for easy customization:
+
+- **Data paths**: CSV file locations
+- **API settings**: Title, description, version, host, port
+- **CORS settings**: Cross-origin resource sharing configuration
+- **Recommendation settings**: Default limits and parameters
+
+To modify settings, edit `app/config.py` and restart the server.
 
 ## Future Enhancements
 
@@ -186,8 +233,9 @@ Replace the in-memory storage with a proper database:
 - [ ] Social features (friend recommendations)
 - [ ] Machine learning model training pipeline
 - [ ] Caching layer for improved performance
-- [ ] Database persistence
+- [ ] Database persistence (replace CSV files)
 - [ ] User authentication and authorization
+- [ ] Admin endpoints for managing events and users
 
 ## Contributing
 
