@@ -1,4 +1,4 @@
-# Vaimo Event Recommendation System
+# Events Recommendation System
 
 A content-based recommendation system built with FastAPI for matching users with relevant events based on their preferences and interests. The system loads data from CSV files to simulate reading from a remote database.
 
