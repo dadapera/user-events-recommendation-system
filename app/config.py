@@ -1,5 +1,5 @@
 """
-Configuration settings for the Vaimo Event Recommendation System
+Configuration settings for the Events Recommendation System
 Supports environment variables for containerized deployments
 """
 
