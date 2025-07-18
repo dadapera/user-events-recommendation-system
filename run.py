@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Vaimo Event Recommendation System - Startup Script
+Events Recommendation System - Startup Script
 Run this script to start the FastAPI server
 """
 

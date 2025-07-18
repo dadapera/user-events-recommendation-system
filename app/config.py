@@ -1,5 +1,5 @@
 """
-Configuration settings for the Vaimo Event Recommendation System
+Configuration settings for the Events Recommendation System
 """
 
 import os
@@ -9,7 +9,7 @@ EVENTS_CSV_PATH = "data/events.csv"
 USERS_CSV_PATH = "data/users.csv"
 
 # API Configuration
-API_TITLE = "Vaimo Event Recommendation System"
+API_TITLE = "Events Recommendation System"
 API_DESCRIPTION = "A content-based recommendation system for user-event matching"
 API_VERSION = "1.0.0"
 API_HOST = "0.0.0.0"

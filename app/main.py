@@ -98,7 +98,7 @@ def read_user_from_csv(user_id: str):
 
 @app.get("/")
 async def root():
-    return {"message": "Vaimo Event Recommendation System"}
+    return {"message": "Events Recommendation System"}
 
 @app.get("/events/", response_model=List[Event])
 async def get_events():

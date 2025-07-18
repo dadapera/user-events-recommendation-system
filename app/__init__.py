@@ -1,1 +1,1 @@
-# Vaimo Event Recommendation System App Package 
+# Events Recommendation System App Package 

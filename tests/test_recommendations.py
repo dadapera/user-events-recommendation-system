@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for the Vaimo Event Recommendation System
+Test script for the Events Recommendation System
 """
 
 import requests
@@ -10,7 +10,7 @@ BASE_URL = "http://localhost:8000"
 
 def test_api():
     """Test the recommendation API with the simplified endpoints"""
-    print("🚀 Testing Vaimo Event Recommendation System")
+    print("🚀 Testing Events Recommendation System")
     print("=" * 50)
     
     # Test API status
