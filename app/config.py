@@ -10,7 +10,7 @@ EVENTS_CSV_PATH = os.getenv("EVENTS_CSV_PATH", "data/events.csv")
 USERS_CSV_PATH = os.getenv("USERS_CSV_PATH", "data/users.csv")
 
 # API Configuration - Docker-friendly defaults
-API_TITLE = os.getenv("API_TITLE", "Vaimo Event Recommendation System")
+API_TITLE = os.getenv("API_TITLE", "Events Recommendation System")
 API_DESCRIPTION = os.getenv("API_DESCRIPTION", "A content-based recommendation system for user-event matching")
 API_VERSION = os.getenv("API_VERSION", "1.0.0")
 API_HOST = os.getenv("API_HOST", "0.0.0.0")  # 0.0.0.0 for Docker

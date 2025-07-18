@@ -150,7 +150,7 @@ EVENTS_CSV_PATH=data/events.csv
 USERS_CSV_PATH=data/users.csv
 
 # API settings
-API_TITLE="Vaimo Event Recommendation System"
+API_TITLE="Events Recommendation System"
 API_HOST=0.0.0.0
 API_PORT=8000
 
