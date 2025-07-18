@@ -93,6 +93,8 @@ The content-based recommendation engine uses simple category matching:
 
 ### Starting the API Server
 
+#### Option 1: Local Development
+
 ```bash
 python run.py
 ```
@@ -102,7 +104,83 @@ Or run directly with uvicorn:
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+#### Option 2: Docker (Recommended)
+
+**Quick Start:**
+```bash
+# Build and run with docker-compose
+docker-compose up --build
+```
+
+**Development with Hot Reload:**
+```bash
+# Use development compose file with volume mounts
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+**Production Deployment:**
+```bash
+# Build image
+docker build -t vaimo-recommendation-system .
+
+# Run container
+docker run -p 8000:8000 vaimo-recommendation-system
+```
+
 The server will start on `http://localhost:8000` and automatically load data from CSV files on each request.
+
+## Docker Deployment 🐳
+
+The application is fully containerized and ready for deployment in any Docker-compatible environment.
+
+### Docker Files
+
+- **`Dockerfile`** - Production-ready container with security best practices
+- **`docker-compose.yml`** - Production deployment with health checks
+- **`docker-compose.dev.yml`** - Development setup with hot reload
+- **`.dockerignore`** - Optimized build context
+
+### Environment Variables
+
+Configure the application using environment variables:
+
+```bash
+# Data paths
+EVENTS_CSV_PATH=data/events.csv
+USERS_CSV_PATH=data/users.csv
+
+# API settings
+API_TITLE="Vaimo Event Recommendation System"
+API_HOST=0.0.0.0
+API_PORT=8000
+
+# CORS settings (production)
+CORS_ORIGINS=https://yourdomain.com,https://api.yourdomain.com
+
+# Application settings
+ENVIRONMENT=production
+DEBUG=false
+DEFAULT_RECOMMENDATION_LIMIT=10
+```
+
+### Docker Commands
+
+```bash
+# Development with hot reload
+docker-compose -f docker-compose.dev.yml up --build
+
+# Production deployment
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Rebuild after code changes
+docker-compose up --build --force-recreate
+```
 
 ### API Documentation
 

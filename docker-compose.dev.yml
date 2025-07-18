@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: vaimo-recommendation-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount entire app for hot reload during development
+      - ./app:/app/app
+      - ./data:/app/data
+      - ./tests:/app/tests
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    # Override default command to use reload
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    networks:
+      - recommendation-network
+
+networks:
+  recommendation-network:
+    driver: bridge 
